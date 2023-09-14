@@ -2,6 +2,7 @@ package com.example.bifinal
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -38,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
                 val json = JSONObject()
                 json.put("email", email)
                 json.put("password", password)
+                Log.d("Usuario:",email)
 
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
@@ -45,6 +47,7 @@ class LoginActivity : AppCompatActivity() {
                     .url("http://54.227.125.166/barrios_inteligentes/assets/php/login.php")
                     .post(requestBody)
                     .build()
+                Log.d("Envio POST:", requestBody.toString())
 
                 val response = client.newCall(request).execute()
                 val responseBody = response.body?.string()
