@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://54.227.125.166/barrios_inteligentes/assets/php/login.php")
+                    .url("https://44.216.113.38/barrios_inteligentes/assets/php/login.php")
                     .post(requestBody)
                     .build()
                 Log.d("Envio POST:", requestBody.toString())
