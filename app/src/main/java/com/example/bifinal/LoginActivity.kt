@@ -13,10 +13,32 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.security.cert.X509Certificate
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 class LoginActivity : AppCompatActivity() {
 
-    private val client = OkHttpClient()
+    private val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+        override fun getAcceptedIssuers(): Array<X509Certificate?> = arrayOfNulls(0)
+        override fun checkClientTrusted(certs: Array<X509Certificate>, authType: String) {}
+        override fun checkServerTrusted(certs: Array<X509Certificate>, authType: String) {}
+    })
+
+    private val client: OkHttpClient
+
+    init {
+        val sslContext = SSLContext.getInstance("SSL")
+        sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+        val sslSocketFactory = sslContext.socketFactory
+
+        val builder = OkHttpClient.Builder()
+        builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+        builder.hostnameVerifier { _, _ -> true }
+
+        client = builder.build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,15 +61,13 @@ class LoginActivity : AppCompatActivity() {
                 val json = JSONObject()
                 json.put("email", email)
                 json.put("password", password)
-                Log.d("Usuario:",email)
+                Log.d("Usuario:", email)
 
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
-
                 val request = Request.Builder()
                     .url("https://44.216.113.38/barrios_inteligentes/assets/php/login.php")
                     .post(requestBody)
                     .build()
-                Log.d("Envio POST:", requestBody.toString())
 
                 val response = client.newCall(request).execute()
                 val responseBody = response.body?.string()
