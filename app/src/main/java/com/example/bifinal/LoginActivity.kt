@@ -78,8 +78,13 @@ class LoginActivity : AppCompatActivity() {
 
                     withContext(Dispatchers.Main) {
                         if (status == "success") {
-                            // Redirige al usuario a la actividad principal
+                            val nombre = jsonResponse.getString("nombre")
+                            val apellido = jsonResponse.getString("apellido")
+                            val email = jsonResponse.getString("email")
+
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                            intent.putExtra("nav_header_title", "$nombre $apellido")
+                            intent.putExtra("nav_header_subtitle", email)
                             startActivity(intent)
                             finish()
                         } else {
@@ -99,4 +104,5 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
 }

@@ -2,6 +2,7 @@ package com.example.bifinal
 
 import android.os.Bundle
 import android.view.Menu
+import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -33,8 +34,16 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        // Recuperar los datos enviados desde LoginActivity
+        val title = intent.getStringExtra("nav_header_title")
+        val subtitle = intent.getStringExtra("nav_header_subtitle")
+
+        // Actualizar el NavigationView con los datos recibidos
+        val headerView = navView.getHeaderView(0)
+        headerView.findViewById<TextView>(R.id.nav_header_title).text = title
+        headerView.findViewById<TextView>(R.id.nav_header_subtitle).text = subtitle
+
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
@@ -43,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
