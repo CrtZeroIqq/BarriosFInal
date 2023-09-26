@@ -1,6 +1,7 @@
 package com.example.bifinal
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
@@ -38,6 +39,10 @@ class MainActivity : AppCompatActivity() {
         // Recuperar los datos enviados desde LoginActivity
         val title = intent.getStringExtra("nav_header_title")
         val subtitle = intent.getStringExtra("nav_header_subtitle")
+        Log.d("MainActivity", "Email recuperado: $subtitle")
+        val bundle = Bundle()
+        bundle.putString("nav_header_subtitle", subtitle)
+        navController.navigate(R.id.nav_gallery, bundle)
 
         // Actualizar el NavigationView con los datos recibidos
         val headerView = navView.getHeaderView(0)

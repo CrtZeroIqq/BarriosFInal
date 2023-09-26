@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +27,7 @@ import javax.net.ssl.X509TrustManager
 
 class GalleryFragment : Fragment() {
 
+
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
     private val user by lazy { arguments?.getString("nav_header_subtitle") ?: "" }
@@ -36,6 +38,7 @@ class GalleryFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
+
     ): View {
         val galleryViewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
 
@@ -59,6 +62,7 @@ class GalleryFragment : Fragment() {
         binding.basura.setOnClickListener { sendReport("Basura en las Calles") }
         binding.calles.setOnClickListener { sendReport("Calles en Mal Estado") }
         binding.luminarias.setOnClickListener { sendReport("Luminarias Apagadas") }
+        Log.d("GalleryFragment", "Email recuperado: $user")
 
         return root
     }
