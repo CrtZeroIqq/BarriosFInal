@@ -7,35 +7,47 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.bifinal.databinding.FragmentGalleryBinding
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
+import java.io.IOException
+import java.security.cert.X509Certificate
+import java.text.SimpleDateFormat
+import java.util.*
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 class GalleryFragment : Fragment() {
 
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
-    private val client = OkHttpClient()
+    private val user by lazy { arguments?.getString("nav_header_subtitle") ?: "" }
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val client by lazy { getUnsafeOkHttpClient() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val galleryViewModel =
-            ViewModelProvider(this).get(GalleryViewModel::class.java)
+        val galleryViewModel = ViewModelProvider(this).get(GalleryViewModel::class.java)
 
         _binding = FragmentGalleryBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        val textView: TextView = binding.textGallery
+        galleryViewModel.text.observe(viewLifecycleOwner) {
+            textView.text = it
+        }
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         // Set up the ImageButtons' click listeners
         binding.asalto.setOnClickListener { sendReport("Asalto") }
@@ -47,55 +59,72 @@ class GalleryFragment : Fragment() {
         binding.basura.setOnClickListener { sendReport("Basura en las Calles") }
         binding.calles.setOnClickListener { sendReport("Calles en Mal Estado") }
         binding.luminarias.setOnClickListener { sendReport("Luminarias Apagadas") }
-        // ... (repeat for other ImageButtons)
 
-        galleryViewModel.text.observe(viewLifecycleOwner) {
-            binding.textGallery.text = it
-        }
         return root
     }
 
     private fun sendReport(type: String) {
+        val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
+
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                location?.let {
+                    val lat = it.latitude.toString()
+                    val long = it.longitude.toString()
+
+                    // Construct the URL for the API call
+                    val url = "https://44.216.113.38/barrios_inteligentes/assets/php/denuncia.php?user=$user&timestamp=$timestamp&type=$type&lat=$lat&long=$long"
+
+                    // Make the API call using the constructed URL
+                    val request = Request.Builder()
+                        .url(url)
+                        .build()
+
+                    client.newCall(request).enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            // Handle the error
+                            e.printStackTrace()
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            if (response.isSuccessful) {
+                                val responseBody = response.body?.string()
+                                // TODO: Handle the successful response, if needed
+                                println(responseBody)
+                            } else {
+                                // Handle the unsuccessful response
+                                println("Error: ${response.code}")
+                            }
+                        }
+                    })
+                }
+            }
+        } else {
             // Request location permission
-            ActivityCompat.requestPermissions(
-                requireActivity(),
+            requestPermissions(
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1234
+                LOCATION_PERMISSION_REQUEST_CODE
             )
-            return
         }
+    }
 
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            location?.let {
-                val user = "nombreUsuario" // Replace with the logged-in user's name
-                val timestamp = System.currentTimeMillis().toString()
-                val lat = location.latitude.toString()
-                val long = location.longitude.toString()
-
-                val url = "https://tu-url.com/api.php?user=$user&timestamp=$timestamp&type=$type&lat=$lat&long=$long"
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val request = Request.Builder().url(url).build()
-                    val response = client.newCall(request).execute()
-
-                    if (response.isSuccessful) {
-                        // Handle successful response
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(requireContext(), "Denuncia registrada con éxito.", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        // Handle error
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(requireContext(), "Error al registrar denuncia.", Toast.LENGTH_SHORT).show()
-                        }
-                    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted, you can fetch the location now
+                    sendReport("YourReportType")  // Replace "YourReportType" with the actual report type
+                } else {
+                    // Permission denied
+                    Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -104,5 +133,34 @@ class GalleryFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun getUnsafeOkHttpClient(): OkHttpClient {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+                override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+
+                override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
+
+                override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+            })
+
+            val sslContext = SSLContext.getInstance("SSL")
+            sslContext.init(null, trustAllCerts, java.security.SecureRandom())
+            val sslSocketFactory = sslContext.socketFactory
+
+            val builder = OkHttpClient.Builder()
+            builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
+            builder.hostnameVerifier { _, _ -> true }
+
+            return builder.build()
+        } catch (e: Exception) {
+            throw RuntimeException(e)
+        }
+    }
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 1234
     }
 }
