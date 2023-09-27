@@ -36,5 +36,8 @@
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.BIFinal.NoActionBar" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB-5CJe68T7q6052gF9ubR5aKttK_Gr-LY"/>
     </application>
 </manifest>

@@ -6,7 +6,19 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string-array name="denuncia_types">
+        <item>Asalto</item>
+        <item>Violencia Intrafamiliar</item>
+        <item>Colision Vehicular</item>
+        <item>Homicidio</item>
+        <item>Corte de Luz</item>
+        <item>Corte de Agua</item>
+        <item>Basura en las Calles</item>
+        <item>Calles en Mal Estado</item>
+        <item>Luminarias Apagadas</item>
 
+
+    </string-array>
     <string name="menu_home">Inicio</string>
     <string name="menu_gallery">Denuncias</string>
     <string name="menu_slideshow">Mapas de Calor</string>
