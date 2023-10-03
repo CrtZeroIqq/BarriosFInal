@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BIFinal</string>
+    <string name="app_name">Barrios Inteligentes</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Barrios Inteligentes</string>
@@ -22,5 +22,5 @@
     <string name="menu_home">Inicio</string>
     <string name="menu_gallery">Denuncias</string>
     <string name="menu_slideshow">Mapas de Calor</string>
-    <string name="login_label" />
+    <string name="login_label">Barrios Inteligentes</string>
 </resources>
