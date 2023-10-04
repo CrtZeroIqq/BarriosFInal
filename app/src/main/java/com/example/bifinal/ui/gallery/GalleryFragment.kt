@@ -24,6 +24,7 @@ import java.util.*
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import android.app.AlertDialog
 
 class GalleryFragment : Fragment() {
 
@@ -70,50 +71,60 @@ class GalleryFragment : Fragment() {
     private fun sendReport(type: String) {
         val timestamp = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                location?.let {
-                    val lat = it.latitude.toString()
-                    val long = it.longitude.toString()
+        // Mostrar un cuadro de diálogo de confirmación
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirmar envío")
+            .setMessage("¿Estás seguro de que deseas enviar este informe?")
+            .setPositiveButton("Sí") { _, _ ->
+                if (ActivityCompat.checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                        location?.let {
+                            val lat = it.latitude.toString()
+                            val long = it.longitude.toString()
 
-                    // Construct the URL for the API call
-                    val url = "https://44.216.113.38/barrios_inteligentes/assets/php/denuncia.php?user=$user&timestamp=$timestamp&type=$type&lat=$lat&long=$long"
+                            // Construct the URL for the API call
+                            val url = "https://44.216.113.38/barrios_inteligentes/assets/php/denuncia.php?user=$user&timestamp=$timestamp&type=$type&lat=$lat&long=$long"
 
-                    // Make the API call using the constructed URL
-                    val request = Request.Builder()
-                        .url(url)
-                        .build()
+                            // Make the API call using the constructed URL
+                            val request = Request.Builder()
+                                .url(url)
+                                .build()
 
-                    client.newCall(request).enqueue(object : Callback {
-                        override fun onFailure(call: Call, e: IOException) {
-                            // Handle the error
-                            e.printStackTrace()
+                            client.newCall(request).enqueue(object : Callback {
+                                override fun onFailure(call: Call, e: IOException) {
+                                    // Handle the error
+                                    e.printStackTrace()
+                                }
+
+                                override fun onResponse(call: Call, response: Response) {
+                                    if (response.isSuccessful) {
+                                        val responseBody = response.body?.string()
+                                        // TODO: Handle the successful response, if needed
+                                        println(responseBody)
+                                    } else {
+                                        // Handle the unsuccessful response
+                                        println("Error: ${response.code}")
+                                    }
+                                }
+                            })
                         }
-
-                        override fun onResponse(call: Call, response: Response) {
-                            if (response.isSuccessful) {
-                                val responseBody = response.body?.string()
-                                // TODO: Handle the successful response, if needed
-                                println(responseBody)
-                            } else {
-                                // Handle the unsuccessful response
-                                println("Error: ${response.code}")
-                            }
-                        }
-                    })
+                    }
+                } else {
+                    // Request location permission
+                    requestPermissions(
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        LOCATION_PERMISSION_REQUEST_CODE
+                    )
                 }
             }
-        } else {
-            // Request location permission
-            requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE
-            )
-        }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onRequestPermissionsResult(

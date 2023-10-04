@@ -17,6 +17,8 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import android.widget.TextView
+import com.example.bifinal.ui.RegisterFragment
 
 class LoginActivity : AppCompatActivity() {
 
@@ -47,12 +49,21 @@ class LoginActivity : AppCompatActivity() {
         val emailEditText: EditText = findViewById(R.id.emailEditText)
         val passwordEditText: EditText = findViewById(R.id.passwordEditText)
         val loginButton: Button = findViewById(R.id.loginButton)
+        val registerTextView: TextView = findViewById(R.id.registro)
 
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
             loginUser(email, password)
         }
+        registerTextView.setOnClickListener {
+            showRegisterDialog()
+        }
+    }
+
+    private fun showRegisterDialog() {
+        val registerFragment = RegisterFragment()
+        registerFragment.show(supportFragmentManager, "registerFragment")
     }
 
     private fun loginUser(email: String, password: String) {

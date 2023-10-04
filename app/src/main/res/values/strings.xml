@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">Barrios Inteligentes</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Abrir Navegador</string>
+    <string name="navigation_drawer_close">Cerrar Navegador</string>
     <string name="nav_header_title">Barrios Inteligentes</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="nav_header_desc">Barrios Inteligentes</string>
+    <string name="action_settings">Cuenta</string>
     <string-array name="denuncia_types">
+        <item>Seleccione Evento…</item>
         <item>Asalto</item>
         <item>Violencia Intrafamiliar</item>
         <item>Colision Vehicular</item>

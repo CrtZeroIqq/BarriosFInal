@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nombre -->
+        <EditText
+            android:id="@+id/first_nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre"
+            android:inputType="textPersonName" />
+
+        <!-- Apellido -->
+        <EditText
+            android:id="@+id/last_nameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Apellido"
+            android:inputType="textPersonName" />
+
+        <!-- RUT -->
+        <EditText
+            android:id="@+id/rutEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="RUT"
+            android:inputType="text" />
+
+        <!-- Fecha de Nacimiento -->
+        <EditText
+            android:id="@+id/birth_dateEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Fecha de Nacimiento"
+            android:inputType="date" />
+
+        <!-- Email -->
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email"
+            android:inputType="textEmailAddress" />
+
+        <!-- Teléfono -->
+        <EditText
+            android:id="@+id/phone_numberEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Teléfono"
+            android:inputType="phone" />
+
+        <!-- Barrio (Opcional) -->
+        <EditText
+            android:id="@+id/neighborhoodEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Barrio (Opcional)"
+            android:inputType="text" />
+
+        <!-- Contraseña -->
+        <EditText
+            android:id="@+id/passwordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contraseña"
+            android:inputType="textPassword" />
+
+        <!-- Confirmación de Contraseña -->
+        <EditText
+            android:id="@+id/password_confirmationEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Confirmar Contraseña"
+            android:inputType="textPassword" />
+
+        <!-- Botón de Registro -->
+        <Button
+            android:id="@+id/registerButton"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#1A32C6"
+            android:text="Registrar" />
+
+    </LinearLayout>
+</ScrollView>

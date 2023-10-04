@@ -13,6 +13,7 @@ import com.example.bifinal.R
 import com.example.bifinal.databinding.FragmentSlideshowBinding
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.TileOverlay
 import com.google.android.gms.maps.model.TileOverlayOptions
@@ -65,6 +66,18 @@ class SlideshowFragment : Fragment() {
 
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync { map ->
+            // Ubicaciones de Iquique y Arica
+            val iquique = LatLng(-20.220833, -70.143056)
+            val arica = LatLng(-18.478253, -70.312599)
+
+            // Calcular la ubicación central
+            val centralLat = (iquique.latitude + arica.latitude) / 2
+            val centralLng = (iquique.longitude + arica.longitude) / 2
+            val centralLocation = LatLng(centralLat, centralLng)
+
+            // Mover la cámara a la ubicación central
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(centralLocation, 8f)) // 8f es el nivel de zoom, ajusta según tus necesidades
+
             binding.spinnerDenunciaType.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                     val tipoDenuncia = parent.getItemAtPosition(position).toString()
@@ -119,8 +132,6 @@ class SlideshowFragment : Fragment() {
                     }
                 }
             }
-
-
         })
     }
 
@@ -134,7 +145,6 @@ class SlideshowFragment : Fragment() {
 
         heatmapOverlay = map.addTileOverlay(TileOverlayOptions().tileProvider(provider))
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
