@@ -22,4 +22,10 @@
         android:name="com.example.bifinal.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/dashboard"
+        android:name="com.example.bifinal.ui.stats.StatsFragment"
+        android:label="DashBoard"
+        tools:layout="@layout/fragment_stats"/>
 </navigation>

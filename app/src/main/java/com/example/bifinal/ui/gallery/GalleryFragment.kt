@@ -136,7 +136,7 @@ class GalleryFragment : Fragment() {
             LOCATION_PERMISSION_REQUEST_CODE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission granted, you can fetch the location now
-                    sendReport("YourReportType")  // Replace "YourReportType" with the actual report type
+                    //sendReport("YourReportType")  // Replace "YourReportType" with the actual report type
                 } else {
                     // Permission denied
                     Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show()

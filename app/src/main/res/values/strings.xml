@@ -23,5 +23,6 @@
     <string name="menu_home">Inicio</string>
     <string name="menu_gallery">Denuncias</string>
     <string name="menu_slideshow">Mapas de Calor</string>
+    <string name="menu_stats">DashBoard</string>
     <string name="login_label">Barrios Inteligentes</string>
 </resources>
